@@ -5,12 +5,16 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split, KFold, cross_val_score, GridSearchCV, RandomizedSearchCV, StratifiedKFold
 from sklearn.metrics import accuracy_score, roc_auc_score
+from sklearn.neural_network import MLPClassifier
 from skbio.stats.composition import clr
+from sklearn.pipeline import Pipeline
+
 
 # read in data
-combined_df = pd.read_parquet('meta2db_combined_fecal_abundances.parquet') # I recommend using this for faster reading
+combined_df = pd.read_parquet('../meta2db_combined_fecal_abundances.parquet') # I recommend using this for faster reading
 # combined_df = pd.read_csv('meta2db_combined_fecal_abundances.csv', index_col=0)
 print("Finished reading in abundance file...")
+print(f"Shape of dataframe: {combined_df.shape}")
 print(combined_df.head())
 
 # get rid of pre-diseased samples to simplify analysis
@@ -44,10 +48,34 @@ XSTrain = scaler.fit_transform(XTrain)
 XSTest = scaler.transform(XTest)
 print("Data has been scaled...")
 
-# baseline model
-print("Running a baseline logistic regression with elastic net...")
-base_model = LogisticRegression(penalty='l1', solver='liblinear', C=0.5, 
-                                class_weight='balanced').fit(XSTrain, ytrain)
-predY = base_model.predict(XSTest)
+### Try out Logistic Regression baseline classifier
 
-print(f"Accuracy of baseline model: {accuracy_score(ytest, predY)}")
+print("Running a baseline logistic regression with elastic net...")
+lr = LogisticRegression(penalty='l1', solver='liblinear', C=0.5, 
+                        class_weight='balanced').fit(XSTrain, ytrain)
+predY = lr.predict(XSTest)
+predY_prob = lr.predict_proba(XSTest)[:, 1]
+print(f"Logistic Regression Test Accuracy: {accuracy_score(ytest, predY):.4f}")
+
+auc = roc_auc_score(ytest, predY_prob)
+print(f"Logistic Regression ROC AUC: {auc:.4f}")
+
+
+### Try out MLP classifier
+print("Running a baseline MLP...")
+mlp = MLPClassifier(
+    hidden_layer_sizes=(64, 32),
+    activation="relu",
+    solver="adam",
+    alpha=0.001,
+    max_iter=500,
+    early_stopping=True,
+    random_state=42)
+
+mlp.fit(XSTrain, ytrain)
+predY = mlp.predict(XSTest)
+print(f"MLP Test Accuracy: {accuracy_score(ytest, predY):.4f}")
+
+predY_prob = mlp.predict_proba(XSTest)[:, 1]
+auc = roc_auc_score(ytest, predY_prob)
+print(f"MLP ROC AUC: {auc:.4f}")
