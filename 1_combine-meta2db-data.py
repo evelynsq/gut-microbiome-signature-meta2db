@@ -1,4 +1,11 @@
-"""Script to combine all the Meta2DB study data specific to the gut microbiome."""
+"""
+Script to combine all the Meta2DB study data specific to the gut microbiome.
+
+IMPORTANT: 
+you don't need to run this script again if you want to look at only genus-level data.
+just use the output file 'meta2db_combined_fecal_abundances.parquet' downstream,
+start from 'evelyn-meta2db-models-test.py'.
+"""
 
 from pathlib import Path
 import pandas as pd
@@ -14,7 +21,7 @@ print(f"Shape of fecal sample metadata: {meta.shape}")
 # rename some metadata study names to more programmatically find those studies later
 fecal_meta['project_name'] = fecal_meta['project_name'].replace('iHMP_IBD', '2022_IHMP')
 
-meta_cols = ['project_name', 'disease_category', 'health_disease_stat']
+meta_cols = ['project_name', 'disease_category', 'health_disease_stat', 'host_age', 'host_sex']
 all_abundances = []
 all_metas = []
 dir = Path("../meta2db/meta2db_microbiome profiles")
