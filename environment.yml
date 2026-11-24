@@ -1,0 +1,17 @@
+name: gut-microbiota-meta2db
+channels:
+ - conda-forge
+ - defaults
+
+# add any additional dependencies needed
+dependencies:
+ - python=3.10
+ - ipykernel
+ - matplotlib
+ - numpy
+ - pandas
+ - scikit-bio
+ - scikit-learn
+ - pyarrow
+ - pip:
+   - combatlearn

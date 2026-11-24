@@ -6,3 +6,13 @@ Important files:
 2. `meta2db_combined_fecal_abundances.parquet`: This is the output of the above script. This will be used downstream for preprocessing and model building.
 3. `2_preprocess-neurological-data.py`: This is what should be used as the foundation for building your deep learning model. It already corrects for study batch effect, does transformation, train/test split, scaling. You should copy this file and add your own model implementation on the bottom.
 
+
+Create environment:
+```
+conda env create -f environment.yml
+```
+
+Activate environment:
+```
+conda activate gut-microbiota-meta2db
+```

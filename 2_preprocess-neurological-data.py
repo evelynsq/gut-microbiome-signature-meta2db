@@ -7,7 +7,6 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 from skbio.stats.composition import clr
 from sklearn.metrics import accuracy_score, roc_auc_score
-from sklearn.neural_network import MLPClassifier
 from combatlearn import ComBat
 
 
@@ -85,6 +84,8 @@ print("Features have been standardized...")
 
 
 mlp_code = """
+from sklearn.neural_network import MLPClassifier
+
 # if you are curious, this is how a baseline MLP performs
 print("Running a baseline MLP...")
 mlp = MLPClassifier(
