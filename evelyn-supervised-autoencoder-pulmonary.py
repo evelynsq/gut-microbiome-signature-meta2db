@@ -143,7 +143,7 @@ recon_weight = 0.1
 ce_weight = 1
 
 noise_std = 0.15 # determines the level of noise to add on input features
-seed = 0
+seed = 1
 np.random.seed(seed)
 torch.manual_seed(seed)
 k = 5 # for stratified kfold validation split
