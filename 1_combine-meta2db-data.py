@@ -98,13 +98,6 @@ combined_abundances = combined_abundances.sparse.to_dense().fillna(0)
 combined_abundances = combined_abundances.loc[:, combined_abundances.var() > 0.01]
 print("Filtered out features that have variances at 0.01 or less")
 
-# filter to keep only features present in at least a certain percentage of samples
-pct = 0.15
-min_samples = int(pct * len(df.columns))
-features_kept = (combined_abundances > 0).sum() >= min_samples
-combined_abundances = combined_abundances.loc[:, features_kept]
-print(f"Filter to keep only features present in at least {pct} of samples")
-
 # final dataframe that will have meta + abundance together
 final_df = pd.concat([combined_meta, combined_abundances], axis=1)
 print("Done combining the metadata and the combined abundances together")

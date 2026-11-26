@@ -10,13 +10,13 @@ And looking into it further, pulmonary disease classification actually can perfo
 better with using the supervised autoencoder model :)
 
 I will look more into ways to improve accuracy, but the current implementation right now has:
-seed = 42
-test accuracy: 86%
-test AUC: 0.923
+ex. for seed = 42:
+test accuracy: 87%
+test AUC: 0.940
 
-seed = 0
-test accuracy: 92%
-test AUC: 0.981
+for seed = 0:
+test accuracy: 93%
+test AUC: 0.977
 """
 
 # preprocessing data
@@ -68,6 +68,14 @@ print(f"{X.shape[1]} genus-level features")
 y = y.map({'control': 0, 'diseased': 1}).astype(int)
 print(y.value_counts(), "\n")
 
+# filter to keep only features present in at least a certain percentage of pulmonary samples
+pct = 0.15
+min_samples = int(pct * len(X))
+features_kept = (X > 0).sum() >= min_samples
+X = X.loc[:, features_kept]
+print(f"Filter to keep only features present in at least {pct} of samples")
+print(f"{X.shape[1]} features kept...")
+
 
 ##### CLR transform microbiome abundance data first #####
 pseudo_count = 0.5
@@ -103,7 +111,7 @@ print("Corrected for study batch effect with combatlearn...")
 scaler = StandardScaler()
 XSTrain = scaler.fit_transform(XTrain_combat)
 XSTest = scaler.transform(XTest_combat)
-print("Features have been standardized...")
+print("Features have been standardized...\n")
 
 
 ##### Baseline MLP for comparison #####
@@ -123,7 +131,7 @@ print(f"MLP Test Accuracy: {accuracy_score(ytest, predY)}")
 
 predY_prob = mlp.predict_proba(XSTest)[:, 1]
 auc = roc_auc_score(ytest, predY_prob)
-print(f"MLP ROC AUC: {auc}")
+print(f"MLP ROC AUC: {auc}\n")
 
 
 ###### Supervised Denoising Autoencoder Implementation ######
@@ -143,7 +151,7 @@ recon_weight = 0.1
 ce_weight = 1
 
 noise_std = 0.15 # determines the level of noise to add on input features
-seed = 1
+seed = 0
 np.random.seed(seed)
 torch.manual_seed(seed)
 k = 5 # for stratified kfold validation split
